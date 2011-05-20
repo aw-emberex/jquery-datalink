@@ -69,7 +69,14 @@ $.extend({
 	setField: function(target, field, value) {
 		if ( target.nodeType ) {
 			var setter = fnSetters[ field ] || "attr";
-			$(target)[setter](value);
+			/* Hack to set radio buttons and checkboxes */
+			if ($(target).is(':radio')) {
+				$(target).parent().children(":radio[value='" + value + "']").attr('checked', true);
+			} else if ($(target).is(':checkbox')) {
+				if (target.value == value) $(target).attr('checked', true);
+			} else {
+				$(target)[setter](value);
+			}
 		} else {
 			var parts = field.split(".");
 			parts[1] = parts[1] ? "." + parts[1] : "";
